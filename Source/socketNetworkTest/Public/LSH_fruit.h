@@ -23,4 +23,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* meshComp;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USphereComponent* spherecomponent;
+
 };
