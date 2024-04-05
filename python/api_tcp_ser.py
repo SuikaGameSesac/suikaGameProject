@@ -20,6 +20,7 @@ def start_server(host='127.0.0.1', port=65432):
 
         # 클라이언트로부터 연결이 수립되면, accept 메서드는 연결된 클라이언트의 소켓 객체와 주소를 반환합니다.
         conn, addr = socket_server.accept()
+        
         print(f"Connection Successful / address: {addr}")
 
 ##### mediapipe #####

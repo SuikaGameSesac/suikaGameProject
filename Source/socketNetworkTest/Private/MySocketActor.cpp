@@ -22,6 +22,13 @@ void AMySocketActor::BeginPlay()
         QuitUI->AddToViewport();
     }
 
+    //FTimerHandle TimerHandle;
+    //TArray<uint8> ReceivedData;
+
+    // 0.1초마다 DataReceive 함수 호출 데이터 수신!!
+    //GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AMySocketActor::DataReceive, 1.0f, true);
+
+
     ChangeGameState(ESuikaGameState::GameReady);
 }
 
@@ -98,5 +105,16 @@ void AMySocketActor::CloseSocket()
     socket->Close();
     UE_LOG(LogTemp, Error, TEXT("Server Close"));
     // Set socket to nullptr to indicate it is closed
+}
+
+void AMySocketActor::DataReceive()
+{
+    uint8 Buffer[1024];
+    int32 BytesRead = 0;
+    if (socket->Recv(Buffer, sizeof(Buffer), BytesRead))
+    {
+        FString ReceivedMessage = FString(UTF8_TO_TCHAR(Buffer));
+            UE_LOG(LogTemp, Warning, TEXT("Server Message: %s"), *ReceivedMessage);
+    }
 }
 

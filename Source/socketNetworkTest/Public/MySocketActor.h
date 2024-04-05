@@ -47,4 +47,7 @@ public:
 	UPROPERTY()
 	class UServerQuitWidget* QuitUI;
 
+	UFUNCTION()
+	void DataReceive();
+
 };
