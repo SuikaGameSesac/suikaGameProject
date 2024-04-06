@@ -29,4 +29,22 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class USphereComponent* spherecomponent;
 
+	UFUNCTION()
+	void HitEvent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);//event when fruit hit
+
+	UPROPERTY()
+	class ALSH_FruitManager* manager;
+
+	UPROPERTY(BlueprintReadOnly)
+	int level;
+
+	bool doOnce = false;
+
+	UFUNCTION()
+	void DestroyActorWithDelay();
+
+	UFUNCTION()
+	void SetShow();
+
+	FTimerHandle TimerHandle;
 };
