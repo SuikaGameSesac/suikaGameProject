@@ -3,6 +3,8 @@
 
 #include "LSH_FruitManager.h"
 #include "LSH_fruit.h"
+#include "MySocketActor.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ALSH_FruitManager::ALSH_FruitManager()
@@ -16,6 +18,17 @@ ALSH_FruitManager::ALSH_FruitManager()
 void ALSH_FruitManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AMySocketActor* SocketActor = Cast<AMySocketActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AMySocketActor::StaticClass()));
+	if (SocketActor)
+	{
+		// SocketActor를 가져오는 데 성공한 경우
+		SocketActor->OnSocketDataUpdate().AddUObject(this, &ALSH_FruitManager::HandleSocketDataUpdate);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FruitManager Fail"));
+	}
 
     FTimerHandle myTimerHandle;
     GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
@@ -54,4 +67,13 @@ void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
 	++fruitLevel;
 
 	CreateFruit(hitLoc, fruitLevel);
+}
+
+void ALSH_FruitManager::HandleSocketDataUpdate(int32 NewNumberValue, bool NewBoolValue)
+{
+	yPosition = NewNumberValue;
+	isGrab = NewBoolValue;
+
+	UE_LOG(LogTemp, Error, TEXT("Received Number: %d, Received Bool: %s"), yPosition, isGrab ? TEXT("True") : TEXT("False"));
+
 }

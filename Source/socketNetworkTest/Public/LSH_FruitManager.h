@@ -38,4 +38,13 @@ public:
 	UFUNCTION()
 	void AfterHitEvent(FVector hitLoc, int fruitLevel);
 
+	UPROPERTY(EditAnywhere)
+	int32 yPosition = 320;
+
+	UPROPERTY(EditAnywhere)
+	bool isGrab = true;
+
+	UFUNCTION()
+	void HandleSocketDataUpdate(int32 NewNumberValue, bool NewBoolValue);
+
 };

@@ -127,14 +127,14 @@ void AMySocketActor::DataReceive()
             {
                 if (Value.IsNumeric()) // 현재 값이 숫자인 경우
                 {
-                    // 숫자로 변환하여 저장
+                    // 숫자로 변환하여 저장 -> 좌표 값
                     LastNumberValue = FCString::Atoi(*Value);
                     bExpectingNumber = false; // 다음 값은 부울 값이라고 기대
                 }
             }
             else // 현재 부울 값이라고 기대하는 경우
             {
-                bool BoolValue = false; // 부울 값 저장을 위한 변수
+                bool BoolValue = false; // 부울 값 저장을 위한 변수 
 
                 // 현재 값이 "True"인지 "False"인지 대소문자 구분 없이 확인하여 부울 값 설정
                 if (Value.Equals(TEXT("True"), ESearchCase::IgnoreCase))
@@ -146,6 +146,8 @@ void AMySocketActor::DataReceive()
                     BoolValue = false;
                 }
 
+                OnSocketDataUpdate().Broadcast(LastNumberValue, BoolValue);
+                                
                 // 숫자 값과 부울 값 출력
                 UE_LOG(LogTemp, Warning, TEXT("Received Number: %d, Received Bool: %s"), LastNumberValue, BoolValue ? TEXT("True") : TEXT("False"));
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LSH_FruitManager.h"
 #include "GameFramework/Actor.h"
 #include "MySocketActor.generated.h"
 
@@ -14,6 +15,8 @@ enum class ESuikaGameState : uint8
 	GameExit,
 };
 
+DECLARE_EVENT_TwoParams(AMySocketActor, FSocketDataUpdateEvent, int32, bool);
+
 UCLASS()
 class SOCKETNETWORKTEST_API AMySocketActor : public AActor
 {
@@ -21,6 +24,7 @@ class SOCKETNETWORKTEST_API AMySocketActor : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
+	ALSH_FruitManager* fruitManagerRef = nullptr;
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,5 +53,11 @@ public:
 
 	UFUNCTION()
 	void DataReceive();
+
+public:
+	FSocketDataUpdateEvent& OnSocketDataUpdate() { return SocketDataUpdateEvent; }
+
+private:
+	FSocketDataUpdateEvent SocketDataUpdateEvent;
 
 };
