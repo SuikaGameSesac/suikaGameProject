@@ -22,7 +22,11 @@ void AMySocketActor::BeginPlay()
         QuitUI->AddToViewport();
     }
 
-    //FTimerHandle TimerHandle;
+	FTimerHandle TimerHandle;
+
+    // 0.1초마다 DataReceive 함수 호출 데이터 수신!!
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AMySocketActor::DataReceive, 0.1f, true);
+
     //TArray<uint8> ReceivedData;
 
     // 0.1초마다 DataReceive 함수 호출 데이터 수신!!
