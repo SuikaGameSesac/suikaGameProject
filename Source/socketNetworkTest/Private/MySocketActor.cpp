@@ -27,12 +27,6 @@ void AMySocketActor::BeginPlay()
     // 0.1초마다 DataReceive 함수 호출 데이터 수신!!
     GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AMySocketActor::DataReceive, 0.1f, true);
 
-    //TArray<uint8> ReceivedData;
-
-    // 0.1초마다 DataReceive 함수 호출 데이터 수신!!
-    //GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AMySocketActor::DataReceive, 1.0f, true);
-
-
     ChangeGameState(ESuikaGameState::GameReady);
 }
 
@@ -111,14 +105,30 @@ void AMySocketActor::CloseSocket()
     // Set socket to nullptr to indicate it is closed
 }
 
+bool bExpectingNumber = true; // 다음에 기대하는 값이 숫자인지 여부를 나타내는 플래그
+int32 LastNumberValue = 0; // 이전에 수신된 숫자 값
+
 void AMySocketActor::DataReceive()
 {
-    uint8 Buffer[1024];
-    int32 BytesRead = 0;
+    uint8 Buffer[1024]; // 데이터를 수신할 버퍼
+    int32 BytesRead = 0; // 수신한 바이트 수
     if (socket->Recv(Buffer, sizeof(Buffer), BytesRead))
     {
-        FString ReceivedMessage = FString(UTF8_TO_TCHAR(Buffer));
-            UE_LOG(LogTemp, Warning, TEXT("Server Message: %s"), *ReceivedMessage);
+        FString ReceivedMessage = FString(UTF8_TO_TCHAR(Buffer)); // 수신한 데이터를 FString으로 변환
+
+        // 수신한 데이터를 공백을 기준으로 분할하여 배열에 저장
+        TArray<FString> Values;
+        ReceivedMessage.ParseIntoArray(Values, TEXT(" "), true);
+
+        // 배열을 순회하면서 값을 처리
+        for (const FString& Value : Values)
+        {
+            // 숫자인 경우 또는 "True" 또는 "False"인 경우에만 출력
+            if (Value.IsNumeric() || Value.Equals(TEXT("True"), ESearchCase::IgnoreCase) || Value.Equals(TEXT("False"), ESearchCase::IgnoreCase))
+            {
+                UE_LOG(LogTemp, Warning, TEXT("%s"), *Value);
+            }
+        }
     }
 }
 

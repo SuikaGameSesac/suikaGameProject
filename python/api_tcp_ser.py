@@ -6,6 +6,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi.responses import StreamingResponse
 import uvicorn
 import socket
+import time
 
 ##### TCP socket #####
 def start_server(host='127.0.0.1', port=65432):
@@ -128,6 +129,9 @@ def generate_frames():
         frame = buffer.tobytes()
         yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        
+        # 0.1초 대기
+        time.sleep(0.1)
 
 ##### API #####
 app = FastAPI()
