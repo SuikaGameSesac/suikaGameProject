@@ -135,13 +135,13 @@ app = FastAPI()
 def root_index():
     return "server running"
  
-router_vedio = APIRouter(prefix="/vedio")
+router_video = APIRouter(prefix="/video")
 
-@router_vedio.get("/")
-async def read_vedio():
+@router_video.get("/")
+async def read_video():
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
-app.include_router(router_vedio)
+app.include_router(router_video)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
