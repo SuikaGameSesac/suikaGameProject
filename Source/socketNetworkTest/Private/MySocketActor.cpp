@@ -13,7 +13,7 @@
 // Called when the game starts or when spawned
 void AMySocketActor::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
     QuitUI = CreateWidget<UServerQuitWidget>(GetWorld(), QuitUIFactory);
     if (QuitUI)
@@ -22,7 +22,7 @@ void AMySocketActor::BeginPlay()
         QuitUI->AddToViewport();
     }
 
-	FTimerHandle TimerHandle;
+    FTimerHandle TimerHandle;
 
     // 0.1초마다 DataReceive 함수 호출 데이터 수신!!
     GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AMySocketActor::DataReceive, 0.1f, true);
@@ -33,7 +33,7 @@ void AMySocketActor::BeginPlay()
 // Called every frame
 void AMySocketActor::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 
 }
 
@@ -69,8 +69,8 @@ void AMySocketActor::ConnectToServer(const FString& IPAddress, int32 Port)
     {
         UE_LOG(LogTemp, Warning, TEXT("Server Success"))
 
-        // 데이터 전송
-        FString Message = TEXT("Message_Send buffer");
+            // 데이터 전송
+            FString Message = TEXT("Message_Send buffer");
         int32 BytesSent = 0;
         TArray<uint8> SendBuffer;
         const TCHAR* MessagePtr = *Message;
@@ -123,12 +123,34 @@ void AMySocketActor::DataReceive()
         // 배열을 순회하면서 값을 처리
         for (const FString& Value : Values)
         {
-            // 숫자인 경우 또는 "True" 또는 "False"인 경우에만 출력
-            if (Value.IsNumeric() || Value.Equals(TEXT("True"), ESearchCase::IgnoreCase) || Value.Equals(TEXT("False"), ESearchCase::IgnoreCase))
+            if (bExpectingNumber) // 현재 숫자 값이라고 기대하는 경우
             {
-                UE_LOG(LogTemp, Warning, TEXT("%s"), *Value);
+                if (Value.IsNumeric()) // 현재 값이 숫자인 경우
+                {
+                    // 숫자로 변환하여 저장
+                    LastNumberValue = FCString::Atoi(*Value);
+                    bExpectingNumber = false; // 다음 값은 부울 값이라고 기대
+                }
+            }
+            else // 현재 부울 값이라고 기대하는 경우
+            {
+                bool BoolValue = false; // 부울 값 저장을 위한 변수
+
+                // 현재 값이 "True"인지 "False"인지 대소문자 구분 없이 확인하여 부울 값 설정
+                if (Value.Equals(TEXT("True"), ESearchCase::IgnoreCase))
+                {
+                    BoolValue = true;
+                }
+                else if (Value.Equals(TEXT("False"), ESearchCase::IgnoreCase))
+                {
+                    BoolValue = false;
+                }
+
+                // 숫자 값과 부울 값 출력
+                UE_LOG(LogTemp, Warning, TEXT("Received Number: %d, Received Bool: %s"), LastNumberValue, BoolValue ? TEXT("True") : TEXT("False"));
+
+                bExpectingNumber = true; // 다음 값은 숫자 값이라고 기대
             }
         }
     }
 }
-

@@ -114,8 +114,8 @@ def generate_frames():
                 pose = get_hand_pose(hand_landmarks)
 
                 # Socket Send
-                conn.sendall(bytes(str(x), 'utf-8'))
-                conn.sendall(bytes(str(pose), 'utf-8'))
+                conn.sendall(bytes(str(x) + ' ' + str(pose)+ ' ', 'utf-8'))
+
 
                 # Socket Recieve
                 # data = socket_connect.recv(1024)

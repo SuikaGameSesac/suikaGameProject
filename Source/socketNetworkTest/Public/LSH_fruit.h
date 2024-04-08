@@ -47,4 +47,10 @@ public:
 	void SetShow();
 
 	FTimerHandle TimerHandle;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class UWidgetComponent* fruitImageComp;
+
+	UPROPERTY()
+	class ULSH_FruitImage* fruitImage;
 };
