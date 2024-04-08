@@ -38,4 +38,7 @@ public:
 	UFUNCTION()
 	void AfterHitEvent(FVector hitLoc, int fruitLevel);
 
+	UPROPERTY(BlueprintReadOnly)
+	int32 score = 0;
+
 };

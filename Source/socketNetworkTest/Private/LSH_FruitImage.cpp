@@ -29,7 +29,7 @@ void ULSH_FruitImage::NativeConstruct()
 
 void ULSH_FruitImage::ChangeImage(int i)
 {
-    UE_LOG(LogTemp, Warning, TEXT("%d"), i);
+    //UE_LOG(LogTemp, Warning, TEXT("%d"), i);
     img_fruit->SetBrushFromTexture(ImageTextures[i]);
     //img_fruit->setsize
 }

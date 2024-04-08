@@ -48,10 +48,36 @@ void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
 {
 	if (fruitLevel == 6 || hitLoc == pastCreateLocation)return;
 	
-	UE_LOG(LogTemp, Warning, TEXT("%d %d %d"), hitLoc.X, hitLoc.Y, hitLoc.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("%d %d %d"), hitLoc.X, hitLoc.Y, hitLoc.Z);
 	pastCreateLocation = hitLoc;
 
 	++fruitLevel;
 
 	CreateFruit(hitLoc, fruitLevel);
+
+	//score
+	switch (fruitLevel)
+	{
+	case 1:
+		score += 1;
+		break;
+	case 2:
+		score += 6;
+		break;
+	case 3:
+		score += 15;
+		break;
+	case 4:
+		score += 28;
+		break;
+	case 5:
+		score += 45;
+		break;
+	case 6:
+		score += 66;
+		break;
+	default:
+		break;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("now score : %d"), score);
 }
