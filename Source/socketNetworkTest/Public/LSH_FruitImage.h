@@ -17,12 +17,11 @@ class SOCKETNETWORKTEST_API ULSH_FruitImage : public UUserWidget
 
 protected:
     virtual void NativeConstruct() override;
-	
 
 public:
     ULSH_FruitImage(const FObjectInitializer& ObjectInitializer);
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+    UPROPERTY(EditAnywhere, meta = (BindWidget))
     class UImage* img_fruit;
 
     UPROPERTY(EditAnywhere)

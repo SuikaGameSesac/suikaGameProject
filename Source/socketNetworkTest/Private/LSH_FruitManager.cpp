@@ -46,7 +46,7 @@ void ALSH_FruitManager::CreateFruit(FVector createLocation, int level)
 
 void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
 {
-	if (hitLoc == pastCreateLocation)return;
+	if (fruitLevel == 6 || hitLoc == pastCreateLocation)return;
 	
 	UE_LOG(LogTemp, Warning, TEXT("%d %d %d"), hitLoc.X, hitLoc.Y, hitLoc.Z);
 	pastCreateLocation = hitLoc;
