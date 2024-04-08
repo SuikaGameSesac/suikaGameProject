@@ -8,6 +8,7 @@
 #include "SocketSubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include "ServerQuitWidget.h"
+#include "Net/Core/Trace/NetTrace.h"
 
 // Sets default values
 ALSH_FruitManager::ALSH_FruitManager()
@@ -30,11 +31,12 @@ void ALSH_FruitManager::BeginPlay()
 	}
 
     FTimerHandle myTimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
-        {
-            CreateFruit(GetActorLocation() + FMath::VRand() * 100, 0);
-            GetWorld()->GetTimerManager().ClearTimer(myTimerHandle);
-        }), 0.5f, true);
+    //捞霸 积己
+    //GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
+        //{
+         //   CreateFruit(GetActorLocation() + FMath::VRand() * 100, 0);
+          //  GetWorld()->GetTimerManager().ClearTimer(myTimerHandle);
+        //}), 0.5f, true);
 
 	GetWorld()->GetTimerManager().SetTimer(myTimerHandle, this, &ALSH_FruitManager::DataReceive, 0.1f, true);
 
@@ -45,6 +47,12 @@ void ALSH_FruitManager::BeginPlay()
 void ALSH_FruitManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if(!isGrab)
+    {
+        ChangeGameState(ESuikaGameState::GameFinish);
+    }
+
 
 }
 
@@ -82,8 +90,12 @@ void ALSH_FruitManager::ChangeGameState(ESuikaGameState NewState)
 		ConnectToServer(ServerIP, ServerPort);
 		break;
 	case ESuikaGameState::GamePlaying:
-		// Do something when game starts playing
+        //Default 苞老 积己 困摹
+        CreateFruit(GetActorLocation(), FMath::RandRange(0, 2));
 		break;
+    case ESuikaGameState::GameFinish:
+        ChangeGameState(ESuikaGameState::GamePlaying);
+        break;
 	case ESuikaGameState::GameExit:
 		CloseSocket();
 		break;
@@ -130,6 +142,7 @@ void ALSH_FruitManager::ConnectToServer(const FString& IPAddress, int32 Port)
     {
         UE_LOG(LogTemp, Error, TEXT("Server Fail"));
     }
+    ChangeGameState(ESuikaGameState::GamePlaying);
 }
 
 void ALSH_FruitManager::CloseSocket()

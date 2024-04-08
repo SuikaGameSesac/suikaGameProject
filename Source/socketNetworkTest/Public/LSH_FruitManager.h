@@ -11,6 +11,7 @@ enum class ESuikaGameState : uint8
 {
 	GameReady,
 	GamePlaying,
+	GameFinish,
 	GameExit,
 };
 
