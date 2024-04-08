@@ -9,15 +9,10 @@
 /**
  * 
  */
+
 UCLASS()
 class SOCKETNETWORKTEST_API ASocketGameModeBase : public AGameModeBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:
-	virtual void BeginPlay() override;
-
-private:
-	void ConnectToServer(const FString& IPAddress, int32 Port);
-	
 };
