@@ -22,7 +22,7 @@ void ALSH_FruitManager::BeginPlay()
         {
             CreateFruit(GetActorLocation() + FMath::VRand() * 100, 0);
             GetWorld()->GetTimerManager().ClearTimer(myTimerHandle);
-        }), 1.0f, true);
+        }), 0.5f, true);
 }
 
 // Called every frame

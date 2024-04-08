@@ -5,6 +5,11 @@
 #include "Components/SphereComponent.h"
 #include "LSH_FruitManager.h"
 #include <cmath>
+#include "Blueprint/UserWidget.h"
+#include "Components/WidgetComponent.h"
+#include "LSH_FruitImage.h"
+
+
 
 // Sets default values
 ALSH_fruit::ALSH_fruit()
@@ -21,6 +26,9 @@ ALSH_fruit::ALSH_fruit()
 	meshComp->SetRelativeScale3D(FVector(0.1f));
 
 	spherecomponent->OnComponentHit.AddDynamic(this, &ALSH_fruit::HitEvent);
+
+	fruitImageComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("hpUIComp"));//위젯
+	fruitImageComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +36,8 @@ void ALSH_fruit::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	fruitImage = Cast<ULSH_FruitImage>(fruitImageComp->GetWidget());//위젯 캐스팅
+
 	GetWorldTimerManager().SetTimerForNextTick(this, &ALSH_fruit::SetShow);
 }
 
@@ -67,5 +77,6 @@ void ALSH_fruit::DestroyActorWithDelay()
 void ALSH_fruit::SetShow()
 {
 	FVector scale = ((pow(2, level) * 0.1) + 1.0f) * FVector(1, 1, 1);
-		SetActorScale3D(scale);
+	SetActorScale3D(scale);
+	fruitImage->ChangeImage(level);//과일이미지 변경
 }
