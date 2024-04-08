@@ -6,6 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "LSH_FruitManager.generated.h"
 
+UENUM(BlueprintType)
+enum class ESuikaGameState : uint8
+{
+	GameReady,
+	GamePlaying,
+	GameExit,
+};
+
 UCLASS()
 class SOCKETNETWORKTEST_API ALSH_FruitManager : public AActor
 {
@@ -18,6 +26,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	FSocket* socket;
+	ESuikaGameState CurrentGameState;
+	FString ServerIP = TEXT("127.0.0.1");
+	int32 ServerPort = 65432;
 
 public:	
 	// Called every frame
@@ -44,7 +56,22 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool isGrab = true;
 
+	// 서버 관련
+
+	void ChangeGameState(ESuikaGameState NewState); // Change access modifier to public
+
+	void ConnectToServer(const FString& IPAddress, int32 Port);
+
+	UFUNCTION(BlueprintCallable)
+	void CloseSocket();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UServerQuitWidget> QuitUIFactory;
+
+	UPROPERTY()
+	class UServerQuitWidget* QuitUI;
+
 	UFUNCTION()
-	void HandleSocketDataUpdate(int32 NewNumberValue, bool NewBoolValue);
+	void DataReceive();
 
 };

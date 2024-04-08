@@ -20,7 +20,7 @@ void UServerQuitWidget::NativeConstruct()
 
 void UServerQuitWidget::OnButtonClicked()
 {
-    AMySocketActor* MySocketActor = Cast<AMySocketActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AMySocketActor::StaticClass()));
+    ALSH_FruitManager* MySocketActor = Cast<ALSH_FruitManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AMySocketActor::StaticClass()));
 
     if (MySocketActor)
     {
