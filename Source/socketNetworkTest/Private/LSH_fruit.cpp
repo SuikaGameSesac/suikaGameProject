@@ -78,7 +78,7 @@ void ALSH_fruit::DestroyActorWithDelay()
 
 void ALSH_fruit::SetShow()
 {
-	FVector scale = ((pow(1.8, level) * 0.1) + 1.0f) * FVector(2, 2, 2);
+	FVector scale = ((pow(1.9, level) * 0.1) + 1.0f) * FVector(2, 2, 2);
 	SetActorScale3D(scale);
 	fruitImage->ChangeImage(level);//과일이미지 변경
 }
