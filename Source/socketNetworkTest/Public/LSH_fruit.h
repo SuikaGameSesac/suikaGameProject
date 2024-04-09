@@ -62,4 +62,7 @@ public:
 
 	UFUNCTION()
 	void setCurrentPhysics(double yPosition, bool isGrab, bool state);
+
+	UFUNCTION()
+	void setPhysics(bool state);
 };

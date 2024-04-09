@@ -40,9 +40,7 @@ void ALSH_fruit::BeginPlay()
 
 	GetWorldTimerManager().SetTimerForNextTick(this, &ALSH_fruit::SetShow);
 
-	spherecomponent->SetSimulatePhysics(false);
 	inHand = false;
-
 }
 
 // Called every frame
@@ -80,7 +78,7 @@ void ALSH_fruit::DestroyActorWithDelay()
 
 void ALSH_fruit::SetShow()
 {
-	FVector scale = ((pow(2, level) * 0.1) + 1.0f) * FVector(1, 1, 1);
+	FVector scale = ((pow(1.8, level) * 0.1) + 1.0f) * FVector(2, 2, 2);
 	SetActorScale3D(scale);
 	fruitImage->ChangeImage(level);//과일이미지 변경
 }
@@ -90,7 +88,7 @@ void ALSH_fruit::setFruitLocation(bool isGrab, float yPosition)
 	if (isGrab)
 	{
 		inHand = true;
-		SetActorLocation(FVector3d(yPosition,0.0,  200.0));
+		SetActorLocation(FVector3d(yPosition,0.0,  210.0));
 	}
 }
 
@@ -98,9 +96,14 @@ void ALSH_fruit::setCurrentPhysics( double yPosition, bool isGrab, bool state)
 {
 	if(isGrab == false && inHand == true)
 	{
-		SetActorLocation(FVector3d(yPosition, 0.0, 200.0));
-		spherecomponent->SetSimulatePhysics(state);
+		SetActorLocation(FVector3d(yPosition, 0.0, 210.0));
+		setPhysics(state);
 		manager->ChangeGameState(ESuikaGameState::GameFinish);
 		inHand = false;
 	}
+}
+
+void ALSH_fruit::setPhysics(bool state)
+{
+	spherecomponent->SetSimulatePhysics(state);
 }

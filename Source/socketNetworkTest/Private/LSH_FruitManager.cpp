@@ -49,7 +49,7 @@ void ALSH_FruitManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    UE_LOG(LogTemp, Log, TEXT("Received Number: %d, Received Bool: %s"), currentYPosition, currentIsGrab ? TEXT("True") : TEXT("False"));
+    //UE_LOG(LogTemp, Log, TEXT("Received Number: %d, Received Bool: %s"), currentYPosition, currentIsGrab ? TEXT("True") : TEXT("False"));
     // 여기서 다른 작업 수행 가능
 
     if (bCreate && !inHand && -10.0f <= yPosition && yPosition <= 10.0f && isGrab) {
@@ -82,6 +82,7 @@ void ALSH_FruitManager::CreateFruit(FVector createLocation, int level)
     currentFruit = nullptr;
     bCreate = true;
     ALSH_fruit* fruit = GetWorld()->SpawnActor<ALSH_fruit>(fruitFactory);
+    fruit->setPhysics(false);
     currentFruit = fruit;
 
 	if(fruit != nullptr)
@@ -95,7 +96,7 @@ void ALSH_FruitManager::CreateFruit(FVector createLocation, int level)
 void ALSH_FruitManager::CombineFruit(FVector createLocation, int level)
 {
     ALSH_fruit* fruit = GetWorld()->SpawnActor<ALSH_fruit>(fruitFactory);
-
+    fruit->setPhysics(true);
     if (fruit != nullptr)
     {
         fruit->SetActorLocation(createLocation);
@@ -235,7 +236,7 @@ void ALSH_FruitManager::DataReceive()
                 setServerQeust(yPosition, isGrab);
 
                 // 숫자 값과 부울 값 출력
-                UE_LOG(LogTemp, Error, TEXT("Received Number: %d, Received Bool: %s"), yPosition, BoolValue ? TEXT("True") : TEXT("False"));
+                //UE_LOG(LogTemp, Error, TEXT("Received Number: %d, Received Bool: %s"), yPosition, BoolValue ? TEXT("True") : TEXT("False"));
 
                 bExpectingNumber = true; // 다음 값은 숫자 값이라고 기대
             }
@@ -253,5 +254,5 @@ void ALSH_FruitManager::setServerQeust(float syPosition, bool sisGrab)
 {
     currentYPosition = syPosition;
     currentIsGrab = sisGrab;
-    UE_LOG(LogTemp, Warning, TEXT("Received Number: %d, Received Bool: %s"), currentYPosition, currentIsGrab ? TEXT("True") : TEXT("False"));
+    //UE_LOG(LogTemp, Warning, TEXT("Received Number: %d, Received Bool: %s"), currentYPosition, currentIsGrab ? TEXT("True") : TEXT("False"));
 }
