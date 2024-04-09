@@ -41,4 +41,10 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int32 score = 0;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UgameWidget> gameUIFactory;
+
+	UPROPERTY()
+	class UgameWidget* widget;
+
 };

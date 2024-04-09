@@ -3,6 +3,7 @@
 
 #include "LSH_FruitManager.h"
 #include "LSH_fruit.h"
+#include "gameWidget.h"
 
 // Sets default values
 ALSH_FruitManager::ALSH_FruitManager()
@@ -16,6 +17,9 @@ ALSH_FruitManager::ALSH_FruitManager()
 void ALSH_FruitManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	widget = CreateWidget<UgameWidget>(GetWorld(), gameUIFactory);
+	widget->AddToViewport();
 
     FTimerHandle myTimerHandle;
     GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
@@ -42,6 +46,9 @@ void ALSH_FruitManager::CreateFruit(FVector createLocation, int level)
 		fruit->manager = this;
 		fruit->level = level;
 	}
+
+	
+
 }
 
 void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
@@ -80,4 +87,5 @@ void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
 		break;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("now score : %d"), score);
+	widget->SetScoreText(score);
 }

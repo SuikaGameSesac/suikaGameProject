@@ -32,4 +32,6 @@ public:
 
     int32 CurrentImageIndex = 0;
     FTimerHandle TimerHandle;
+
+
 };
