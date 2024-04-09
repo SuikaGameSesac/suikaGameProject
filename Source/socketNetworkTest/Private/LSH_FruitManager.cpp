@@ -10,6 +10,7 @@
 #include "ServerQuitWidget.h"
 #include "Net/Core/Trace/NetTrace.h"
 #include "Math/UnrealMathUtility.h"
+#include "gameWidget.h"
 
 // Sets default values
 ALSH_FruitManager::ALSH_FruitManager()
@@ -27,12 +28,12 @@ void ALSH_FruitManager::BeginPlay()
 	QuitUI = CreateWidget<UServerQuitWidget>(GetWorld(), QuitUIFactory);
 	if (QuitUI)
 	{
-		// ºäÆ÷Æ®¿¡ À§Á¬ Ãß°¡
+		// ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 		QuitUI->AddToViewport();
 	}
 
     FTimerHandle myTimerHandle;
-    //ÀÌ°Ô »ý¼º
+    //ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½
     //GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
         //{
          //   CreateFruit(GetActorLocation() + FMath::VRand() * 100, 0);
@@ -42,6 +43,10 @@ void ALSH_FruitManager::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(myTimerHandle, this, &ALSH_FruitManager::DataReceive, 0.1f, true);
 
 	ChangeGameState(ESuikaGameState::GameReady);
+
+
+    widget = CreateWidget<UgameWidget>(GetWorld(), gameUIFactory);
+    widget->AddToViewport();
 }
 
 // Called every frame
@@ -50,7 +55,7 @@ void ALSH_FruitManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
     //UE_LOG(LogTemp, Log, TEXT("Received Number: %d, Received Bool: %s"), currentYPosition, currentIsGrab ? TEXT("True") : TEXT("False"));
-    // ¿©±â¼­ ´Ù¸¥ ÀÛ¾÷ ¼öÇà °¡´É
+    // ï¿½ï¿½ï¿½â¼­ ï¿½Ù¸ï¿½ ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     if (bCreate && !inHand && -10.0f <= yPosition && yPosition <= 10.0f && isGrab) {
         inHand = true;
@@ -115,6 +120,32 @@ void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
 	++fruitLevel;
 
 	CombineFruit(hitLoc, fruitLevel);
+
+    //score
+    switch (fruitLevel)
+    {
+    case 1:
+        score += 1;
+        break;
+    case 2:
+        score += 6;
+        break;
+    case 3:
+        score += 15;
+        break;
+    case 4:
+        score += 28;
+        break;
+    case 5:
+        score += 45;
+        break;
+    case 6:
+        score += 66;
+        break;
+    default:
+        break;
+    }
+    widget->SetScoreText(score);
 }
 
 void ALSH_FruitManager::ChangeGameState(ESuikaGameState NewState)
@@ -153,7 +184,7 @@ void ALSH_FruitManager::ConnectToServer(const FString& IPAddress, int32 Port)
     {
         UE_LOG(LogTemp, Warning, TEXT("Server Success"))
 
-        // µ¥ÀÌÅÍ Àü¼Û
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         FString Message = TEXT("Message_Send buffer");
         int32 BytesSent = 0;
         TArray<uint8> SendBuffer;
@@ -166,7 +197,7 @@ void ALSH_FruitManager::ConnectToServer(const FString& IPAddress, int32 Port)
         }
         socket->Send(SendBuffer.GetData(), SendBuffer.Num(), BytesSent);
 
-        // µ¥ÀÌÅÍ ¼ö½Å
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         uint8 Buffer[1024];
         int32 BytesRead = 0;
         if (socket->Recv(Buffer, sizeof(Buffer), BytesRead))
@@ -190,38 +221,38 @@ void ALSH_FruitManager::CloseSocket()
     // Set socket to nullptr to indicate it is closed
 }
 
-bool bExpectingNumber = true; // ´ÙÀ½¿¡ ±â´ëÇÏ´Â °ªÀÌ ¼ýÀÚÀÎÁö ¿©ºÎ¸¦ ³ªÅ¸³»´Â ÇÃ·¡±×
-int32 LastNumberValue = 0; // ÀÌÀü¿¡ ¼ö½ÅµÈ ¼ýÀÚ °ª
+bool bExpectingNumber = true; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
+int32 LastNumberValue = 0; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Åµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
 void ALSH_FruitManager::DataReceive()
 {
-    uint8 Buffer[1024]; // µ¥ÀÌÅÍ¸¦ ¼ö½ÅÇÒ ¹öÆÛ
-    int32 BytesRead = 0; // ¼ö½ÅÇÑ ¹ÙÀÌÆ® ¼ö
+    uint8 Buffer[1024]; // ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    int32 BytesRead = 0; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½
     if (socket->Recv(Buffer, sizeof(Buffer), BytesRead))
     {
-        FString ReceivedMessage = FString(UTF8_TO_TCHAR(Buffer)); // ¼ö½ÅÇÑ µ¥ÀÌÅÍ¸¦ FStringÀ¸·Î º¯È¯
+        FString ReceivedMessage = FString(UTF8_TO_TCHAR(Buffer)); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ FStringï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 
-        // ¼ö½ÅÇÑ µ¥ÀÌÅÍ¸¦ °ø¹éÀ» ±âÁØÀ¸·Î ºÐÇÒÇÏ¿© ¹è¿­¿¡ ÀúÀå
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         TArray<FString> Values;
         ReceivedMessage.ParseIntoArray(Values, TEXT(" "), true);
 
-        // ¹è¿­À» ¼øÈ¸ÇÏ¸é¼­ °ªÀ» Ã³¸®
+        // ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½È¸ï¿½Ï¸é¼­ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         for (const FString& Value : Values)
         {
-            if (bExpectingNumber) // ÇöÀç ¼ýÀÚ °ªÀÌ¶ó°í ±â´ëÇÏ´Â °æ¿ì
+            if (bExpectingNumber) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½
             {
-                if (Value.IsNumeric()) // ÇöÀç °ªÀÌ ¼ýÀÚÀÎ °æ¿ì
+                if (Value.IsNumeric()) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
                 {
-                    // ¼ýÀÚ·Î º¯È¯ÇÏ¿© ÀúÀå -> ÁÂÇ¥ °ª
+                    // ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½ï¿½È¯ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½Ç¥ ï¿½ï¿½
                     LastNumberValue = FCString::Atoi(*Value);
-                    bExpectingNumber = false; // ´ÙÀ½ °ªÀº ºÎ¿ï °ªÀÌ¶ó°í ±â´ë
+                    bExpectingNumber = false; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½
                 }
             }
-            else // ÇöÀç ºÎ¿ï °ªÀÌ¶ó°í ±â´ëÇÏ´Â °æ¿ì
+            else // ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½
             {
-                bool BoolValue = false; // ºÎ¿ï °ª ÀúÀåÀ» À§ÇÑ º¯¼ö 
+                bool BoolValue = false; // ï¿½Î¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 
-                // ÇöÀç °ªÀÌ "True"ÀÎÁö "False"ÀÎÁö ´ë¼Ò¹®ÀÚ ±¸ºÐ ¾øÀÌ È®ÀÎÇÏ¿© ºÎ¿ï °ª ¼³Á¤
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ "True"ï¿½ï¿½ï¿½ï¿½ "False"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ò¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Î¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 if (Value.Equals(TEXT("True"), ESearchCase::IgnoreCase))
                 {
                     BoolValue = true;
@@ -235,10 +266,10 @@ void ALSH_FruitManager::DataReceive()
                 isGrab = BoolValue;
                 setServerQeust(yPosition, isGrab);
 
-                // ¼ýÀÚ °ª°ú ºÎ¿ï °ª Ãâ·Â
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
                 //UE_LOG(LogTemp, Error, TEXT("Received Number: %d, Received Bool: %s"), yPosition, BoolValue ? TEXT("True") : TEXT("False"));
 
-                bExpectingNumber = true; // ´ÙÀ½ °ªÀº ¼ýÀÚ °ªÀÌ¶ó°í ±â´ë
+                bExpectingNumber = true; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½
             }
         }
     }

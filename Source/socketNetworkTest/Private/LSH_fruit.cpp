@@ -8,7 +8,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/WidgetComponent.h"
 #include "LSH_FruitImage.h"
-#include "DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -51,6 +50,8 @@ void ALSH_fruit::Tick(float DeltaTime)
 	//액터의 y축 고정
 	auto loc = GetActorLocation();
 	SetActorLocation(FVector(loc.X, 0, loc.Z));
+	auto r = fruitImageComp->GetComponentRotation();
+	fruitImageComp->SetWorldRotation(FRotator(r.Pitch, 90, r.Roll));
 }
 
 void ALSH_fruit::HitEvent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -80,7 +81,9 @@ void ALSH_fruit::SetShow()
 {
 	FVector scale = ((pow(1.9, level) * 0.1) + 1.0f) * FVector(2, 2, 2);
 	SetActorScale3D(scale);
-	fruitImage->ChangeImage(level);//과일이미지 변경
+	if (fruitImage != nullptr)fruitImage->ChangeImage(level);
+	float ActorSize = ((pow(2.1f, level) * 0.1) + 1.0f) / 25;
+	float aa = 34.71901f * ((pow(2.1f, level) * 0.1) + 1.0f);
 }
 
 void ALSH_fruit::setFruitLocation(bool isGrab, float yPosition)
