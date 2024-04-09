@@ -8,7 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/WidgetComponent.h"
 #include "LSH_FruitImage.h"
-
+#include "DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -20,13 +20,13 @@ ALSH_fruit::ALSH_fruit()
 	spherecomponent = CreateDefaultSubobject<USphereComponent>(TEXT("sphereComponent"));
 	this->SetRootComponent(spherecomponent);
 	spherecomponent->SetSphereRadius(5.0f);
-
+	spherecomponent->SetSimulatePhysics(false);
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
 	meshComp->SetupAttachment(RootComponent);
 	meshComp->SetRelativeScale3D(FVector(0.1f));
 
 	spherecomponent->OnComponentHit.AddDynamic(this, &ALSH_fruit::HitEvent);
-
+	spherecomponent->SetSimulatePhysics(false);
 	fruitImageComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("hpUIComp"));//위젯
 	fruitImageComp->SetupAttachment(RootComponent);
 }
@@ -39,6 +39,10 @@ void ALSH_fruit::BeginPlay()
 	fruitImage = Cast<ULSH_FruitImage>(fruitImageComp->GetWidget());//위젯 캐스팅
 
 	GetWorldTimerManager().SetTimerForNextTick(this, &ALSH_fruit::SetShow);
+
+	spherecomponent->SetSimulatePhysics(false);
+	inHand = false;
+
 }
 
 // Called every frame
@@ -79,4 +83,24 @@ void ALSH_fruit::SetShow()
 	FVector scale = ((pow(2, level) * 0.1) + 1.0f) * FVector(1, 1, 1);
 	SetActorScale3D(scale);
 	fruitImage->ChangeImage(level);//과일이미지 변경
+}
+
+void ALSH_fruit::setFruitLocation(bool isGrab, float yPosition)
+{
+	if (isGrab)
+	{
+		inHand = true;
+		SetActorLocation(FVector3d(yPosition,0.0,  200.0));
+	}
+}
+
+void ALSH_fruit::setCurrentPhysics( double yPosition, bool isGrab, bool state)
+{
+	if(isGrab == false && inHand == true)
+	{
+		SetActorLocation(FVector3d(yPosition, 0.0, 200.0));
+		spherecomponent->SetSimulatePhysics(state);
+		manager->ChangeGameState(ESuikaGameState::GameFinish);
+		inHand = false;
+	}
 }

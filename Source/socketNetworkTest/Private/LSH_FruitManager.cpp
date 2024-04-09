@@ -9,6 +9,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ServerQuitWidget.h"
 #include "Net/Core/Trace/NetTrace.h"
+#include "Math/UnrealMathUtility.h"
 
 // Sets default values
 ALSH_FruitManager::ALSH_FruitManager()
@@ -48,17 +49,40 @@ void ALSH_FruitManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if(!isGrab)
-    {
-        ChangeGameState(ESuikaGameState::GameFinish);
+    UE_LOG(LogTemp, Log, TEXT("Received Number: %d, Received Bool: %s"), currentYPosition, currentIsGrab ? TEXT("True") : TEXT("False"));
+    // 여기서 다른 작업 수행 가능
+
+    if (bCreate && !inHand && -10.0f <= yPosition && yPosition <= 10.0f && isGrab) {
+        inHand = true;
+        if (currentFruit)
+        {
+            currentFruit->setFruitLocation(isGrab, yPosition);
+            UE_LOG(LogTemp, Warning, TEXT("Hand?"))
+        }
     }
 
+    if(bCreate && isGrab  && inHand)
+    {
+        if(currentFruit)
+			currentFruit->setFruitLocation(isGrab, yPosition);
+    }
 
+    if (!isGrab && inHand)
+    {
+        
+        bCreate = false;
+	    inHand = false;
+	    auto finalYPosition = yPosition;
+	    currentFruit->setCurrentPhysics(finalYPosition, isGrab, true);
+    }
 }
 
 void ALSH_FruitManager::CreateFruit(FVector createLocation, int level)
 {
+    currentFruit = nullptr;
+    bCreate = true;
     ALSH_fruit* fruit = GetWorld()->SpawnActor<ALSH_fruit>(fruitFactory);
+    currentFruit = fruit;
 
 	if(fruit != nullptr)
 	{
@@ -66,6 +90,18 @@ void ALSH_FruitManager::CreateFruit(FVector createLocation, int level)
 		fruit->manager = this;
 		fruit->level = level;
 	}
+}
+
+void ALSH_FruitManager::CombineFruit(FVector createLocation, int level)
+{
+    ALSH_fruit* fruit = GetWorld()->SpawnActor<ALSH_fruit>(fruitFactory);
+
+    if (fruit != nullptr)
+    {
+        fruit->SetActorLocation(createLocation);
+        fruit->manager = this;
+        fruit->level = level;
+    }
 }
 
 void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
@@ -77,7 +113,7 @@ void ALSH_FruitManager::AfterHitEvent(FVector hitLoc, int fruitLevel)
 
 	++fruitLevel;
 
-	CreateFruit(hitLoc, fruitLevel);
+	CombineFruit(hitLoc, fruitLevel);
 }
 
 void ALSH_FruitManager::ChangeGameState(ESuikaGameState NewState)
@@ -90,8 +126,8 @@ void ALSH_FruitManager::ChangeGameState(ESuikaGameState NewState)
 		ConnectToServer(ServerIP, ServerPort);
 		break;
 	case ESuikaGameState::GamePlaying:
-        //Default 과일 생성 위치
-        CreateFruit(GetActorLocation(), FMath::RandRange(0, 2));
+        if(!bCreate)
+			CreateFruit(FVector3d(0,0,270), FMath::RandRange(0, 2));
 		break;
     case ESuikaGameState::GameFinish:
         ChangeGameState(ESuikaGameState::GamePlaying);
@@ -193,12 +229,13 @@ void ALSH_FruitManager::DataReceive()
                 {
                     BoolValue = false;
                 }
-
-                yPosition = LastNumberValue;
+                
+                yPosition = MapIntValue(LastNumberValue, 0, 640, -85.0f, 85.0f);
                 isGrab = BoolValue;
+                setServerQeust(yPosition, isGrab);
 
                 // 숫자 값과 부울 값 출력
-                UE_LOG(LogTemp, Warning, TEXT("Received Number: %d, Received Bool: %s"), LastNumberValue, BoolValue ? TEXT("True") : TEXT("False"));
+                UE_LOG(LogTemp, Error, TEXT("Received Number: %d, Received Bool: %s"), yPosition, BoolValue ? TEXT("True") : TEXT("False"));
 
                 bExpectingNumber = true; // 다음 값은 숫자 값이라고 기대
             }
@@ -206,3 +243,15 @@ void ALSH_FruitManager::DataReceive()
     }
 }
 
+float ALSH_FruitManager::MapIntValue(int32 value, int32 inMin, int32 inMax, float outMin, float outMax)
+{
+	float floatValue = static_cast<float>(value);
+    return FMath::GetMappedRangeValueClamped(FVector2D(inMin, inMax), FVector2D(outMin, outMax), floatValue);
+}
+
+void ALSH_FruitManager::setServerQeust(float syPosition, bool sisGrab)
+{
+    currentYPosition = syPosition;
+    currentIsGrab = sisGrab;
+    UE_LOG(LogTemp, Warning, TEXT("Received Number: %d, Received Bool: %s"), currentYPosition, currentIsGrab ? TEXT("True") : TEXT("False"));
+}

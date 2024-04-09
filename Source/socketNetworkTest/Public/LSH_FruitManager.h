@@ -42,6 +42,9 @@ public:
 	UFUNCTION()
 	void CreateFruit(FVector createLocation, int level);
 
+	UFUNCTION()
+	void CombineFruit(FVector createLocation, int level);
+
 	UPROPERTY()
 	FVector fruitDropLocation;
 
@@ -50,6 +53,9 @@ public:
 
 	UFUNCTION()
 	void AfterHitEvent(FVector hitLoc, int fruitLevel);
+
+	UPROPERTY()
+	class ALSH_fruit* currentFruit;
 
 	UPROPERTY(EditAnywhere)
 	int32 yPosition = 320;
@@ -74,5 +80,25 @@ public:
 
 	UFUNCTION()
 	void DataReceive();
+
+	UPROPERTY()
+	bool bCreate = false;
+	UPROPERTY()
+	bool inHand = false;
+
+	UFUNCTION()
+	float MapIntValue(int32 value, int32 inMin, int32 inMax, float outMin, float outMax);
+
+	UFUNCTION()
+	void setServerQeust(float syPosition, bool sisGrab);
+
+	UPROPERTY(EditAnywhere)
+	int32 currentYPosition = 0;
+
+	UPROPERTY(EditAnywhere)
+	bool currentIsGrab = true;
+
+	UPROPERTY(EditAnywhere)
+	bool bCurrentFruit = true;
 
 };

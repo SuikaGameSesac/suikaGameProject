@@ -3,7 +3,7 @@
 
 #include "ServerQuitWidget.h"
 
-#include "MySocketActor.h"
+#include "LSH_FruitManager.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -20,7 +20,7 @@ void UServerQuitWidget::NativeConstruct()
 
 void UServerQuitWidget::OnButtonClicked()
 {
-    ALSH_FruitManager* MySocketActor = Cast<ALSH_FruitManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AMySocketActor::StaticClass()));
+    ALSH_FruitManager* MySocketActor = Cast<ALSH_FruitManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALSH_FruitManager::StaticClass()));
 
     if (MySocketActor)
     {
