@@ -3,15 +3,15 @@
 
 #include "ServerQuitWidget.h"
 
-#include "MySocketActor.h"
+#include "LSH_FruitManager.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
 void UServerQuitWidget::NativeConstruct()
 {
-	Super::NativeConstruct();
+    Super::NativeConstruct();
 
-    // ¹öÆ° À§Á¬°ú C++ ÄÚµå¸¦ ¹ÙÀÎµùÇÕ´Ï´Ù.
+    // ë²„íŠ¼ ìœ„ì ¯ê³¼ C++ ì½”ë“œë¥¼ ë°”ì¸ë”©í•©ë‹ˆë‹¤.
     if (QuitButton)
     {
         QuitButton->OnClicked.AddDynamic(this, &UServerQuitWidget::OnButtonClicked);
@@ -20,11 +20,11 @@ void UServerQuitWidget::NativeConstruct()
 
 void UServerQuitWidget::OnButtonClicked()
 {
-    AMySocketActor* MySocketActor = Cast<AMySocketActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AMySocketActor::StaticClass()));
+    ALSH_FruitManager* MySocketActor = Cast<ALSH_FruitManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALSH_FruitManager::StaticClass()));
 
     if (MySocketActor)
     {
-        // MySocketActor¿¡¼­ °ÔÀÓ »óÅÂ º¯°æ ÇÔ¼ö È£Ãâ
+        // MySocketActorì—ì„œ ê²Œìž„ ìƒíƒœ ë³€ê²½ í•¨ìˆ˜ í˜¸ì¶œ
         MySocketActor->CloseSocket();
     }
 }

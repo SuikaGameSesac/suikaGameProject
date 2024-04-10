@@ -10,7 +10,6 @@
 #include "LSH_FruitImage.h"
 
 
-
 // Sets default values
 ALSH_fruit::ALSH_fruit()
 {
@@ -20,14 +19,14 @@ ALSH_fruit::ALSH_fruit()
 	spherecomponent = CreateDefaultSubobject<USphereComponent>(TEXT("sphereComponent"));
 	this->SetRootComponent(spherecomponent);
 	spherecomponent->SetSphereRadius(5.0f);
-
+	spherecomponent->SetSimulatePhysics(false);
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
 	meshComp->SetupAttachment(RootComponent);
 	meshComp->SetRelativeScale3D(FVector(0.1f));
 
 	spherecomponent->OnComponentHit.AddDynamic(this, &ALSH_fruit::HitEvent);
-
-	fruitImageComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("fruitComp"));//위젯
+	spherecomponent->SetSimulatePhysics(false);
+	fruitImageComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("hpUIComp"));//위젯
 	fruitImageComp->SetupAttachment(RootComponent);
 }
 
@@ -37,10 +36,10 @@ void ALSH_fruit::BeginPlay()
 	Super::BeginPlay();
 	
 	fruitImage = Cast<ULSH_FruitImage>(fruitImageComp->GetWidget());//위젯 캐스팅
-	
-	//if (fruitImage != nullptr)fruitImage->ChangeImage(level);
 
 	GetWorldTimerManager().SetTimerForNextTick(this, &ALSH_fruit::SetShow);
+
+	inHand = false;
 }
 
 // Called every frame
@@ -52,7 +51,7 @@ void ALSH_fruit::Tick(float DeltaTime)
 	auto loc = GetActorLocation();
 	SetActorLocation(FVector(loc.X, 0, loc.Z));
 	auto r = fruitImageComp->GetComponentRotation();
-	fruitImageComp->SetWorldRotation(FRotator(r.Pitch,90,r.Roll));
+	fruitImageComp->SetWorldRotation(FRotator(r.Pitch, 90, r.Roll));
 }
 
 void ALSH_fruit::HitEvent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -80,13 +79,34 @@ void ALSH_fruit::DestroyActorWithDelay()
 
 void ALSH_fruit::SetShow()
 {
-	FVector scale = ((pow(2.1f, level) * 0.1) + 1.0f) * FVector(1, 1, 1);
+	FVector scale = ((pow(1.9, level) * 0.1) + 1.0f) * FVector(2, 2, 2);
 	SetActorScale3D(scale);
 	if (fruitImage != nullptr)fruitImage->ChangeImage(level);
 	float ActorSize = ((pow(2.1f, level) * 0.1) + 1.0f) / 25;
 	float aa = 34.71901f * ((pow(2.1f, level) * 0.1) + 1.0f);
-	//UE_LOG(LogTemp, Log, TEXT("%f"), (ActorSize - 1) * 25);
-	//if(fruitImageComp!=nullptr)fruitImageComp->SetDrawSize(FVector2D(aa,aa));
-	UE_LOG(LogTemp, Log, TEXT("%f"), aa);
+}
 
+void ALSH_fruit::setFruitLocation(bool isGrab, float yPosition)
+{
+	if (isGrab)
+	{
+		inHand = true;
+		SetActorLocation(FVector3d(yPosition,0.0,  210.0));
+	}
+}
+
+void ALSH_fruit::setCurrentPhysics( double yPosition, bool isGrab, bool state)
+{
+	if(isGrab == false && inHand == true)
+	{
+		SetActorLocation(FVector3d(yPosition, 0.0, 210.0));
+		setPhysics(state);
+		manager->ChangeGameState(ESuikaGameState::GameFinish);
+		inHand = false;
+	}
+}
+
+void ALSH_fruit::setPhysics(bool state)
+{
+	spherecomponent->SetSimulatePhysics(state);
 }

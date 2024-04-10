@@ -53,4 +53,16 @@ public:
 
 	UPROPERTY()
 	class ULSH_FruitImage* fruitImage;
+
+	UPROPERTY()
+	bool inHand;
+
+	UFUNCTION()
+	void setFruitLocation(bool isGrab, float yPosition);
+
+	UFUNCTION()
+	void setCurrentPhysics(double yPosition, bool isGrab, bool state);
+
+	UFUNCTION()
+	void setPhysics(bool state);
 };
