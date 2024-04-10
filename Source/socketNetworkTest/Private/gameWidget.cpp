@@ -41,7 +41,17 @@ void UgameWidget::ReGame()
 void UgameWidget::QuitGame()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Quit Game!!"));
-
+	// 현재 월드에서 게임 인스턴스를 가져옴
+	UWorld* World = GetWorld();
+	if (World != nullptr)
+	{
+		APlayerController* PlayerController = World->GetFirstPlayerController();
+		if (PlayerController != nullptr)
+		{
+			// 게임 종료 프로세스 시작
+			PlayerController->ConsoleCommand("quit");
+		}
+	}
 }
 
 // 레벨을 오픈하는 함수
@@ -63,4 +73,9 @@ void UgameWidget::SetNextFruitIMG(int i)
 void UgameWidget::SetScoreText(int i)
 {
 	if(txt_score)txt_score->SetText(FText::AsNumber(i));
+}
+
+void UgameWidget::WidgetGameOverEvent()
+{
+	cna_gameover->SetVisibility(ESlateVisibility::Visible);
 }

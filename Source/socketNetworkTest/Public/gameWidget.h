@@ -58,4 +58,6 @@ public:
 	UFUNCTION()
 	void SetNextFruitIMG(int i);
 
+	UFUNCTION()
+	void WidgetGameOverEvent();
 };

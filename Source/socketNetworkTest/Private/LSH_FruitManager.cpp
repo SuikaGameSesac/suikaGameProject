@@ -35,10 +35,10 @@ void ALSH_FruitManager::BeginPlay()
     FTimerHandle myTimerHandle;
     //�̰� ����
     //GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
-        //{
-         //   CreateFruit(GetActorLocation() + FMath::VRand() * 100, 0);
-          //  GetWorld()->GetTimerManager().ClearTimer(myTimerHandle);
-        //}), 0.5f, true);
+    //    {
+    //        CreateFruit(GetActorLocation() + FMath::VRand() * 100, 0);
+    //        GetWorld()->GetTimerManager().ClearTimer(myTimerHandle);
+    //    }), 0.5f, true);
 
 	GetWorld()->GetTimerManager().SetTimer(myTimerHandle, this, &ALSH_FruitManager::DataReceive, 0.1f, true);
 
@@ -96,6 +96,8 @@ void ALSH_FruitManager::CreateFruit(FVector createLocation, int level)
 		fruit->manager = this;
 		fruit->level = level;
 	}
+
+    UE_LOG(LogTemp, Warning, TEXT("Create"));
 }
 
 void ALSH_FruitManager::CombineFruit(FVector createLocation, int level)

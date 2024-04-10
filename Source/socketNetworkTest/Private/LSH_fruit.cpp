@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/WidgetComponent.h"
 #include "LSH_FruitImage.h"
+#include "gameWidget.h"
 
 
 // Sets default values
@@ -109,4 +110,16 @@ void ALSH_fruit::setCurrentPhysics( double yPosition, bool isGrab, bool state)
 void ALSH_fruit::setPhysics(bool state)
 {
 	spherecomponent->SetSimulatePhysics(state);
+}
+
+void ALSH_fruit::GameOverEvent()
+{
+	if (!IsOverlapOnce)
+	{
+		IsOverlapOnce = true;
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Game Over"));
+	if(manager&&manager->widget)manager->widget->WidgetGameOverEvent();
 }
