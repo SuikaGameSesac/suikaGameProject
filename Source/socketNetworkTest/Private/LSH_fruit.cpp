@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "LSH_FruitImage.h"
 #include "gameWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -58,6 +59,13 @@ void ALSH_fruit::Tick(float DeltaTime)
 void ALSH_fruit::HitEvent(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	ALSH_fruit* otherFruit = Cast<ALSH_fruit>(OtherActor);
+	
+	if(popSound&&!playSoundOnce)
+	{
+		popSound->Pitch = 1.0f;
+		UGameplayStatics::PlaySound2D(GetWorld(), popSound);
+		playSoundOnce = true;
+	}
 
 	if (!doOnce && otherFruit != nullptr && otherFruit->level == level)
 	{
@@ -69,6 +77,12 @@ void ALSH_fruit::HitEvent(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		doOnce = true;
 
 		GetWorldTimerManager().SetTimerForNextTick(this, &ALSH_fruit::DestroyActorWithDelay);
+
+		if (popSound && !playSoundOnce)
+		{
+			popSound->Pitch = 2.0f;
+			UGameplayStatics::PlaySound2D(GetWorld(), popSound);
+		}
 	}
 	
 }
