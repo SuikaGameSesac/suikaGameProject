@@ -70,4 +70,12 @@ public:
 	void GameOverEvent();
 
 	bool IsOverlapOnce = false; //게임오버존 오버랩이 두번째인지
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	class USoundCue* popCue; // 사운드 큐 변수
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundWave* popSound; // 사운드 웨이브 변수
+
+	bool playSoundOnce=false;
 };
