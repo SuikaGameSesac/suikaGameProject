@@ -63,7 +63,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool isGrab = true;
 
-	// ¼­¹ö °ü·Ã
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	void ChangeGameState(ESuikaGameState NewState); // Change access modifier to public
 
@@ -100,5 +100,16 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bCurrentFruit = true;
+
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 score = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UgameWidget> gameUIFactory;
+
+	UPROPERTY()
+	class UgameWidget* widget;
+
 
 };

@@ -9,9 +9,9 @@
 
 void UServerQuitWidget::NativeConstruct()
 {
-	Super::NativeConstruct();
+    Super::NativeConstruct();
 
-    // ¹öÆ° À§Á¬°ú C++ ÄÚµå¸¦ ¹ÙÀÎµùÇÕ´Ï´Ù.
+    // ë²„íŠ¼ ìœ„ì ¯ê³¼ C++ ì½”ë“œë¥¼ ë°”ì¸ë”©í•©ë‹ˆë‹¤.
     if (QuitButton)
     {
         QuitButton->OnClicked.AddDynamic(this, &UServerQuitWidget::OnButtonClicked);
@@ -24,7 +24,7 @@ void UServerQuitWidget::OnButtonClicked()
 
     if (MySocketActor)
     {
-        // MySocketActor¿¡¼­ °ÔÀÓ »óÅÂ º¯°æ ÇÔ¼ö È£Ãâ
+        // MySocketActorì—ì„œ ê²Œìž„ ìƒíƒœ ë³€ê²½ í•¨ìˆ˜ í˜¸ì¶œ
         MySocketActor->CloseSocket();
     }
 }

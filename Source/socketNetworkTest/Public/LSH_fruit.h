@@ -65,4 +65,9 @@ public:
 
 	UFUNCTION()
 	void setPhysics(bool state);
+
+	UFUNCTION()
+	void GameOverEvent();
+
+	bool IsOverlapOnce = false; //게임오버존 오버랩이 두번째인지
 };

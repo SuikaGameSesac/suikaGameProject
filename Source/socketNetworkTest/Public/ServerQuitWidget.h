@@ -7,7 +7,7 @@
 #include "ServerQuitWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class SOCKETNETWORKTEST_API UServerQuitWidget : public UUserWidget
@@ -20,6 +20,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnButtonClicked();
 
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
 };
