@@ -111,5 +111,6 @@ public:
 	UPROPERTY()
 	class UgameWidget* widget;
 
-
+	UPROPERTY()
+	int nextFruit = 0;
 };

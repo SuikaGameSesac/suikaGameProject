@@ -161,7 +161,11 @@ void ALSH_FruitManager::ChangeGameState(ESuikaGameState NewState)
 		break;
 	case ESuikaGameState::GamePlaying:
         if(!bCreate)
-			CreateFruit(FVector3d(0,0,270), FMath::RandRange(0, 2));
+        {
+            CreateFruit(FVector3d(0, 0, 270), nextFruit);
+            nextFruit = FMath::RandRange(0, 2);
+            if(widget)widget->SetNextFruitIMG(nextFruit);
+        }
 		break;
     case ESuikaGameState::GameFinish:
         ChangeGameState(ESuikaGameState::GamePlaying);
