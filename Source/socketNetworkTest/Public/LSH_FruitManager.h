@@ -32,7 +32,7 @@ protected:
 	FString ServerIP = TEXT("127.0.0.1");
 	int32 ServerPort = 65432;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -100,5 +100,17 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bCurrentFruit = true;
+
+	UPROPERTY()
+	UTexture2D* Texture;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AJIU_VideoActor> VideoActorFactory;
+
+	UPROPERTY()
+	class AJIU_VideoActor* VideoActor;
+
+	UPROPERTY()
+	class UJIU_VideoWidget* VideoWidget;
 
 };

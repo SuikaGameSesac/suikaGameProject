@@ -10,6 +10,12 @@
 #include "ServerQuitWidget.h"
 #include "Net/Core/Trace/NetTrace.h"
 #include "Math/UnrealMathUtility.h"
+#include "ImageUtils.h"
+#include "JIU_VideoActor.h"
+#include "JIU_VideoWidget.h"
+#include "TextureResource.h"
+#include "Engine/Texture2D.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ALSH_FruitManager::ALSH_FruitManager()
@@ -17,6 +23,7 @@ ALSH_FruitManager::ALSH_FruitManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    Texture = UTexture2D::CreateTransient(640, 320, EPixelFormat::PF_R8G8B8A8);
 }
 
 // Called when the game starts or when spawned
@@ -30,6 +37,20 @@ void ALSH_FruitManager::BeginPlay()
 		// 뷰포트에 위젯 추가
 		QuitUI->AddToViewport();
 	}
+
+    VideoActor = GetWorld()->SpawnActor<AJIU_VideoActor>(VideoActorFactory, FVector(0.f, 0.f, 220.f), FRotator(90.f, -90.f, 0.f));
+
+    if (VideoActor)
+    {
+        VideoWidget = VideoActor->VideoWidget;
+        UE_LOG(LogTemp, Warning, TEXT("Find Video Actor!!!"));
+    }
+
+    if (VideoWidget)
+    {
+        // VideoWidget->SetImage(Texture);
+        UE_LOG(LogTemp, Warning, TEXT("Find Widget Video!!!"));
+    }
 
     FTimerHandle myTimerHandle;
     //이게 생성
@@ -195,7 +216,7 @@ int32 LastNumberValue = 0; // 이전에 수신된 숫자 값
 
 void ALSH_FruitManager::DataReceive()
 {
-    uint8 Buffer[1024]; // 데이터를 수신할 버퍼
+    uint8 Buffer[65432]; // 데이터를 수신할 버퍼
     int32 BytesRead = 0; // 수신한 바이트 수
     if (socket->Recv(Buffer, sizeof(Buffer), BytesRead))
     {
@@ -216,6 +237,27 @@ void ALSH_FruitManager::DataReceive()
                     LastNumberValue = FCString::Atoi(*Value);
                     bExpectingNumber = false; // 다음 값은 부울 값이라고 기대
                 }
+            }
+            else if (Value.StartsWith(TEXT("/")))
+            {
+                uint32 size = Value.Len();
+                TArray<uint8> BinaryData;
+                BinaryData.AddUninitialized(size);
+            	StringToBytes(Value, BinaryData.GetData(), size);
+
+
+                // 텍스쳐 데이터로 채웁니다.
+                FTexture2DMipMap& Mip = Texture->PlatformData->Mips[0];
+                void* DataPtr = Mip.BulkData.Lock(LOCK_READ_WRITE);
+                FMemory::Memcpy(DataPtr, BinaryData.GetData(), BinaryData.Num());
+                Mip.BulkData.Unlock();
+
+                // 텍스쳐 설정을 업데이트합니다.
+                // Texture->PlatformData->NumSlices = 1;
+                Texture->PlatformData->PixelFormat = PF_R8G8B8A8;
+
+                // UpdateResource를 호출하여 텍스처 업데이트
+                Texture->UpdateResource();
             }
             else // 현재 부울 값이라고 기대하는 경우
             {

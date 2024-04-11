@@ -4,17 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/IHttpRequest.h"
-#include "JIU_HttpActor.generated.h"
+#include "JIU_VideoActor.generated.h"
 
 UCLASS()
-class SOCKETNETWORKTEST_API AJIU_HttpActor : public AActor
+class SOCKETNETWORKTEST_API AJIU_VideoActor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AJIU_HttpActor();
+	AJIU_VideoActor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,4 +23,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<class UJIU_VideoWidget> VideoWidgetFactory;
+
+	UPROPERTY()
+	class UWidgetComponent* WidgetComponent;
+
+	UPROPERTY()
+	class UJIU_VideoWidget* VideoWidget;
 };
