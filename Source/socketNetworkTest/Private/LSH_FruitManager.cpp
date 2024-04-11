@@ -16,6 +16,7 @@
 #include "TextureResource.h"
 #include "Engine/Texture2D.h"
 #include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
 
 // Sets default values
 ALSH_FruitManager::ALSH_FruitManager()
@@ -23,7 +24,9 @@ ALSH_FruitManager::ALSH_FruitManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-    Texture = UTexture2D::CreateTransient(640, 320, EPixelFormat::PF_R8G8B8A8);
+    // Texture = UTexture2D::CreateTransient(640, 320, EPixelFormat::PF_R8G8B8A8);
+    FString Path = "/Game/JIU/video.video";
+    Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *Path));
 }
 
 // Called when the game starts or when spawned
