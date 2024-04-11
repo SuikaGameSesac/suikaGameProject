@@ -40,7 +40,7 @@ void ALSH_FruitManager::BeginPlay()
     //        GetWorld()->GetTimerManager().ClearTimer(myTimerHandle);
     //    }), 0.5f, true);
 
-	GetWorld()->GetTimerManager().SetTimer(myTimerHandle, this, &ALSH_FruitManager::DataReceive, 0.1f, true);
+	GetWorld()->GetTimerManager().SetTimer(myTimerHandle, this, &ALSH_FruitManager::DataReceive, 0.15f, true);
 
 	ChangeGameState(ESuikaGameState::GameReady);
 
